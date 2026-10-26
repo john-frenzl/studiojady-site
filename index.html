@@ -19,14 +19,14 @@
   #stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);height:auto;transform:translate(-50%,calc(-50% - 15.5vh));opacity:.5;mix-blend-mode:multiply;pointer-events:none}
   @media (orientation:portrait){#stage{width:260vw}}
   @media (prefers-color-scheme:dark){#stage{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen}}
-  main{position:relative;z-index:1;height:100%;display:grid;align-content:center;gap:1rem;text-align:center;pointer-events:none}
+  main{position:relative;height:100%;display:grid;align-content:center;gap:1rem;text-align:center;pointer-events:none}
   /* Band hugs the text: 1px rules, 12.5px padding, gradient clear at the edges and 50% in the middle */
   h1{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(1.3rem,3.8vw,2.2rem);display:inline-block;justify-self:center;white-space:nowrap;margin:0;padding:12.5px 0 12.5px .1em;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:linear-gradient(90deg,rgb(var(--band) / 0),rgb(var(--band) / .5) 50%,rgb(var(--band) / 0))}
   p{opacity:.7;margin:0;padding:0 16px}
-  /* Name block on top, table centred beneath it at a medium size */
+  /* Name block on top, table centred beneath it; main has no z-index so the table can multiply onto the page and spin */
   .name{display:grid;gap:1rem;justify-items:center}
   .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem;mix-blend-mode:multiply}
-  /* Multiply would turn the table almost black on the dark background, so dark mode shows it normally */
+  /* Multiply on the near-black dark background turns the table almost black, so dark mode shows it normally */
   @media (prefers-color-scheme:dark){.table{mix-blend-mode:normal}}
 </style>
 </head>
