@@ -26,8 +26,6 @@
   /* Name block on top, table centred beneath it; main has no z-index so the table can multiply onto the page and spin */
   .name{display:grid;gap:1rem;justify-items:center}
   .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem;mix-blend-mode:multiply}
-  /* Multiply on the near-black dark background turns the table almost black, so dark mode shows it normally */
-  @media (prefers-color-scheme:dark){.table{mix-blend-mode:normal}}
 </style>
 </head>
 <body>
