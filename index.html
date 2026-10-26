@@ -6,18 +6,90 @@
 <title>Studio Jady</title>
 <meta name="robots" content="noindex">
 <style>
-  :root{--bg:#faf1ea;--ink:#111}
-  @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea}}
+  :root{--bg:#faf1ea;--ink:#111;--model:#d9c6b4}
+  @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea;--model:#3a332e}}
   html,body{height:100%;margin:0}
-  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:grid;place-items:center;text-align:center;padding:0 16px}
+  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  /* 3D model sits behind the text */
+  #stage{position:fixed;inset:0;z-index:0;display:block;width:100%;height:100%}
+  main{position:relative;z-index:1;height:100%;display:grid;place-items:center;align-content:center;text-align:center;padding:0 16px;pointer-events:none}
   h1{font-weight:600;letter-spacing:.02em;font-size:clamp(2rem,6vw,3.5rem);margin:0 0 .5rem}
   p{opacity:.7;margin:0}
 </style>
 </head>
 <body>
+<canvas id="stage" aria-hidden="true"></canvas>
 <main>
   <h1>Studio Jady</h1>
   <p>Coming soon.</p>
 </main>
+<script src="assets/vendor/three.min.js"></script>
+<script src="assets/vendor/GLTFLoader.js"></script>
+<script>
+(function () {
+  if (!window.THREE) return;
+  var canvas = document.getElementById('stage');
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.outputEncoding = THREE.sRGBEncoding;
+
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  camera.position.set(0, 0, 6);
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x887766, 0.55));
+  var key = new THREE.DirectionalLight(0xffffff, 0.6);
+  key.position.set(3, 4, 5);
+  scene.add(key);
+
+  var css = getComputedStyle(document.documentElement);
+  var material = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(css.getPropertyValue('--model').trim()),
+    roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide
+  });
+
+  // Spinner holds the model; the model is centred and scaled to a fixed size inside it
+  var spinner = new THREE.Group();
+  scene.add(spinner);
+
+  new THREE.GLTFLoader().load('assets/jady.glb', function (gltf) {
+    var model = gltf.scene;
+    model.traverse(function (o) { if (o.isMesh) o.material = material; });
+    // The logo is modelled lying flat; stand it up to face the camera
+    model.rotation.x = Math.PI / 2;
+    var box = new THREE.Box3().setFromObject(model);
+    var size = box.getSize(new THREE.Vector3());
+    var scale = 3.2 / Math.max(size.x, size.y);
+    model.scale.setScalar(scale);
+    box.setFromObject(model);
+    model.position.sub(box.getCenter(new THREE.Vector3()));
+    spinner.add(model);
+  });
+
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    // Keep the model inside narrow (phone) screens
+    camera.position.z = w < h ? 6 * (h / w) * 0.75 : 6;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var clock = new THREE.Clock();
+  function tick() {
+    var t = clock.getElapsedTime();
+    if (!still) {
+      spinner.rotation.y = t * 0.5;
+      spinner.rotation.x = Math.sin(t * 0.4) * 0.12;
+    }
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
 </body>
 </html>
