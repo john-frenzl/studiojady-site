@@ -29,8 +29,9 @@
 (function () {
   if (!window.THREE) return;
   var canvas = document.getElementById('stage');
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // Opaque canvas and a capped pixel ratio keep each frame cheap so motion stays steady
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   var scene = new THREE.Scene();
@@ -42,11 +43,14 @@
   key.position.set(3, 4, 5);
   scene.add(key);
 
-  var css = getComputedStyle(document.documentElement);
-  var material = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(css.getPropertyValue('--model').trim()),
-    roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide
-  });
+  var material = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide });
+  function applyTheme() {
+    var css = getComputedStyle(document.documentElement);
+    renderer.setClearColor(new THREE.Color(css.getPropertyValue('--bg').trim()), 1);
+    material.color.set(css.getPropertyValue('--model').trim());
+  }
+  applyTheme();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
 
   // Spinner holds the model; the model is centred and scaled to a fixed size inside it
   var spinner = new THREE.Group();
@@ -79,10 +83,10 @@
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // One full turn every LOOP seconds; the tilt shares the same phase so each loop ends where it began
+  // Uses the frame timestamp from requestAnimationFrame, which is evenly spaced, so steps don't jitter
   var LOOP = 30;
-  var clock = new THREE.Clock();
-  function tick() {
-    var phase = (clock.getElapsedTime() / LOOP) % 1 * Math.PI * 2;
+  function tick(now) {
+    var phase = ((now || 0) / 1000 / LOOP) % 1 * Math.PI * 2;
     if (!still) {
       spinner.rotation.y = phase;
       spinner.rotation.x = Math.sin(phase) * 0.08;
@@ -90,7 +94,7 @@
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
   }
-  tick();
+  requestAnimationFrame(tick);
 })();
 </script>
 </body>
