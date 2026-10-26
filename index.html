@@ -78,12 +78,14 @@
   resize();
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // One full turn every LOOP seconds; the tilt shares the same phase so each loop ends where it began
+  var LOOP = 30;
   var clock = new THREE.Clock();
   function tick() {
-    var t = clock.getElapsedTime();
+    var phase = (clock.getElapsedTime() / LOOP) % 1 * Math.PI * 2;
     if (!still) {
-      spinner.rotation.y = t * 0.5;
-      spinner.rotation.x = Math.sin(t * 0.4) * 0.12;
+      spinner.rotation.y = phase;
+      spinner.rotation.x = Math.sin(phase) * 0.08;
     }
     renderer.render(scene, camera);
     requestAnimationFrame(tick);
