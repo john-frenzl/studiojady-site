@@ -25,13 +25,15 @@
   p{opacity:.7;margin:0;padding:0 16px}
   /* Name block on top, table centred beneath it at a medium size */
   .name{display:grid;gap:1rem;justify-items:center}
-  .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem}
+  .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem;mix-blend-mode:multiply}
+  /* Multiply would turn the table almost black on the dark background, so dark mode shows it normally */
+  @media (prefers-color-scheme:dark){.table{mix-blend-mode:normal}}
 </style>
 </head>
 <body>
 <video id="stage" src="assets/jady-spin.mp4" poster="assets/jady-spin-poster.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
 <main>
-  <img class="table" src="assets/table.webp" alt="Swirl side table in resin and oak with forged steel legs" width="1106" height="1400">
+  <img class="table" src="assets/table.webp" alt="Swirl side table in resin and oak with forged steel legs" width="1121" height="1400">
   <div class="name">
     <h1>Studio Jady</h1>
     <p>Coming soon.</p>
