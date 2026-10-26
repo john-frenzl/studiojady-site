@@ -34,9 +34,9 @@
 (function () {
   if (!window.THREE) return;
   var canvas = document.getElementById('stage');
-  // Opaque canvas and a capped pixel ratio keep each frame cheap so motion stays steady
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  // Opaque canvas; full Retina resolution so slow sub-pixel motion doesn't step along jagged edges
+  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputEncoding = THREE.sRGBEncoding;
 
   var scene = new THREE.Scene();
@@ -88,18 +88,31 @@
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // One full turn every LOOP seconds; the tilt shares the same phase so each loop ends where it began
-  // Uses the frame timestamp from requestAnimationFrame, which is evenly spaced, so steps don't jitter
+  // Add #fps to the address to show the frame rate in the corner
+  var fpsEl = null, frames = 0, lastFps = 0;
+  if (location.hash === '#fps') {
+    fpsEl = document.createElement('div');
+    fpsEl.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2;font:12px/1 ui-monospace,monospace;color:var(--ink);opacity:.6';
+    document.body.appendChild(fpsEl);
+  }
+
+  // Driven by the frame timestamp, which is evenly spaced, so each frame advances by the same amount
   var LOOP = 30;
-  function tick(now) {
-    var phase = ((now || 0) / 1000 / LOOP) % 1 * Math.PI * 2;
+  renderer.setAnimationLoop(function (now) {
+    var phase = (now / 1000 / LOOP) % 1 * Math.PI * 2;
     if (!still) {
       spinner.rotation.y = phase;
       spinner.rotation.x = Math.sin(phase) * 0.08;
     }
     renderer.render(scene, camera);
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
+    if (fpsEl) {
+      frames++;
+      if (now - lastFps >= 1000) {
+        fpsEl.textContent = Math.round(frames * 1000 / (now - lastFps)) + ' fps · ' + renderer.getPixelRatio() + 'x';
+        frames = 0; lastFps = now;
+      }
+    }
+  });
 })();
 </script>
 </body>
