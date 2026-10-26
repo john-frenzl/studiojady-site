@@ -14,9 +14,11 @@
   @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea;--model:#3a332e;--rule:#fff;--band:0 0 0}}
   html,body{height:100%;margin:0}
   body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
-  /* 3D model sits behind the text */
-  /* 50% opacity; shifted up so the signature's top sits near the top of the screen */
-  #stage{position:fixed;inset:0;z-index:0;display:block;width:100%;height:100%;opacity:.5;transform:translateY(-15.5vh)}
+  /* Pre-rendered 30s seamless spin (smooth on every device). Light: multiply drops the white
+     background into the page colour. Dark: invert + hue-rotate keeps the warm tint, screen drops the black */
+  #stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);height:auto;transform:translate(-50%,calc(-50% - 15.5vh));opacity:.5;mix-blend-mode:multiply;pointer-events:none}
+  @media (orientation:portrait){#stage{width:260vw}}
+  @media (prefers-color-scheme:dark){#stage{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen}}
   main{position:relative;z-index:1;height:100%;display:grid;align-content:center;gap:1rem;text-align:center;pointer-events:none}
   /* Band hugs the text: 1px rules, 12.5px padding, gradient clear at the edges and 50% in the middle */
   h1{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(1.3rem,3.8vw,2.2rem);display:inline-block;justify-self:center;white-space:nowrap;margin:0;padding:12.5px 0 12.5px .1em;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:linear-gradient(90deg,rgb(var(--band) / 0),rgb(var(--band) / .5) 50%,rgb(var(--band) / 0))}
@@ -27,7 +29,7 @@
 </style>
 </head>
 <body>
-<canvas id="stage" aria-hidden="true"></canvas>
+<video id="stage" src="assets/jady-spin.mp4" poster="assets/jady-spin-poster.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
 <main>
   <img class="table" src="assets/table.webp" alt="Swirl side table in resin and oak with forged steel legs" width="1106" height="1400">
   <div class="name">
@@ -35,92 +37,11 @@
     <p>Coming soon.</p>
   </div>
 </main>
-<script src="assets/vendor/three.min.js"></script>
-<script src="assets/vendor/GLTFLoader.js"></script>
 <script>
-(function () {
-  if (!window.THREE) return;
-  var canvas = document.getElementById('stage');
-  // Opaque canvas; full Retina resolution so slow sub-pixel motion doesn't step along jagged edges
-  var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.outputEncoding = THREE.sRGBEncoding;
-
-  var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-  camera.position.set(0, 0, 6);
-
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x887766, 0.55));
-  var key = new THREE.DirectionalLight(0xffffff, 0.6);
-  key.position.set(3, 4, 5);
-  scene.add(key);
-
-  var material = new THREE.MeshStandardMaterial({ roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide });
-  function applyTheme() {
-    var css = getComputedStyle(document.documentElement);
-    renderer.setClearColor(new THREE.Color(css.getPropertyValue('--bg').trim()), 1);
-    material.color.set(css.getPropertyValue('--model').trim());
+  // Respect reduced-motion: hold the first frame
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var v = document.getElementById('stage'); v.removeAttribute('autoplay'); v.pause();
   }
-  applyTheme();
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
-
-  // Spinner holds the model; the model is centred and scaled to a fixed size inside it
-  var spinner = new THREE.Group();
-  scene.add(spinner);
-
-  new THREE.GLTFLoader().load('assets/jady.glb', function (gltf) {
-    var model = gltf.scene;
-    model.traverse(function (o) { if (o.isMesh) o.material = material; });
-    // The logo is modelled lying flat; stand it up to face the camera
-    model.rotation.x = Math.PI / 2;
-    var box = new THREE.Box3().setFromObject(model);
-    var size = box.getSize(new THREE.Vector3());
-    var scale = 3.2 / Math.max(size.x, size.y);
-    model.scale.setScalar(scale);
-    box.setFromObject(model);
-    model.position.sub(box.getCenter(new THREE.Vector3()));
-    spinner.add(model);
-  });
-
-  function resize() {
-    var w = window.innerWidth, h = window.innerHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    // Keep the model inside narrow (phone) screens
-    camera.position.z = w < h ? 6 * (h / w) * 0.75 : 6;
-    camera.updateProjectionMatrix();
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // One full turn every LOOP seconds; the tilt shares the same phase so each loop ends where it began
-  // Add #fps to the address to show the frame rate in the corner
-  var fpsEl = null, frames = 0, lastFps = 0;
-  if (location.hash === '#fps') {
-    fpsEl = document.createElement('div');
-    fpsEl.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:2;font:12px/1 ui-monospace,monospace;color:var(--ink);opacity:.6';
-    document.body.appendChild(fpsEl);
-  }
-
-  // Driven by the frame timestamp, which is evenly spaced, so each frame advances by the same amount
-  var LOOP = 30;
-  renderer.setAnimationLoop(function (now) {
-    var phase = (now / 1000 / LOOP) % 1 * Math.PI * 2;
-    if (!still) {
-      spinner.rotation.y = phase;
-      spinner.rotation.x = Math.sin(phase) * 0.08;
-    }
-    renderer.render(scene, camera);
-    if (fpsEl) {
-      frames++;
-      if (now - lastFps >= 1000) {
-        fpsEl.textContent = Math.round(frames * 1000 / (now - lastFps)) + ' fps · ' + renderer.getPixelRatio() + 'x';
-        frames = 0; lastFps = now;
-      }
-    }
-  });
-})();
 </script>
 </body>
 </html>
