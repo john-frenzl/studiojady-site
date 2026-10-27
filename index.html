@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap">
 <style>
   /* --rule: lines above and below the name; --band: RGB of the band's fading gradient */
-  :root{--bg:#faf1ea;--ink:#111;--model:#d9c6b4;--rule:#000;--band:255 255 255}
+  :root{--bg:#fff;--ink:#111;--model:#d9c6b4;--rule:#000;--band:255 255 255}
   @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea;--model:#3a332e;--rule:#fff;--band:0 0 0}}
   html,body{height:100%;margin:0}
   body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
@@ -24,9 +24,9 @@
   p{opacity:.7;margin:0;padding:0 16px}
   /* Name block on top, table centred beneath it; main has no z-index so it shares a layer with the spin */
   .name{display:grid;gap:1rem;justify-items:center}
-  /* Two copies of the table stacked: the bottom one hard-lights the page, the top one soft-lights over that */
+  /* Two copies of the table stacked, both soft light at full strength */
   .tables{order:1;justify-self:center;display:grid;max-width:calc(100% - 32px);margin-top:.75rem}
-  .table{grid-area:1/1;height:min(34vh,320px);width:auto;max-width:100%;mix-blend-mode:hard-light}
+  .table{grid-area:1/1;height:min(34vh,320px);width:auto;max-width:100%;mix-blend-mode:soft-light}
   .table-soft{mix-blend-mode:soft-light}
 </style>
 </head>
