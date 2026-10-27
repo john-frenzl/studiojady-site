@@ -19,6 +19,7 @@
   nav{position:fixed;z-index:2;top:12px;left:0;right:0;text-align:center;font-size:.85rem}
   nav a{color:#111;margin:0 .5rem;padding:.3rem .7rem;border:1px solid #111;border-radius:99px;text-decoration:none}
   nav a.on{background:#111;color:#fff}
+  #diag{position:fixed;z-index:3;left:12px;bottom:12px;max-width:calc(100% - 24px);background:#111;color:#fff;font:12px/1.5 ui-monospace,Menlo,monospace;padding:10px 12px;border-radius:8px;white-space:pre-wrap}
 </style>
 </head>
 <body>
@@ -79,6 +80,32 @@
       spinner.rotation.y = ph; spinner.rotation.x = Math.sin(ph) * 0.08;
       renderer.render(scene, camera);
     });
+  })();
+</script>
+<div id="diag">Measuring for 15 seconds...</div>
+<script>
+  // Diagnostics: screen refresh, long frames and dropped video frames over 15 seconds
+  (function () {
+    var out = document.getElementById('diag'), t0 = null, last = null, gaps = [], n = 0;
+    function tick(now) {
+      if (t0 === null) t0 = now;
+      if (last !== null) { gaps.push(now - last); }
+      last = now; n++;
+      if (now - t0 < 15000) return requestAnimationFrame(tick);
+      gaps.sort(function (a, b) { return a - b; });
+      var med = gaps[Math.floor(gaps.length / 2)], hz = Math.round(1000 / med);
+      var long = gaps.filter(function (g) { return g > med * 1.8; });
+      var worst = Math.round(gaps[gaps.length - 1]);
+      var vid = document.querySelector('video'), q = vid && vid.getVideoPlaybackQuality ? vid.getVideoPlaybackQuality() : null;
+      out.textContent =
+        'Variant ' + v.toUpperCase() + '\n' +
+        'Screen: ' + screen.width + 'x' + screen.height + ' @' + (window.devicePixelRatio || 1) + 'x, window ' + innerWidth + 'x' + innerHeight + '\n' +
+        'Refresh: ~' + hz + ' Hz\n' +
+        'Skipped frames: ' + long.length + ' in 15s (worst gap ' + worst + ' ms)\n' +
+        (q ? 'Video dropped: ' + q.droppedVideoFrames + ' of ' + q.totalVideoFrames + '\n' : '') +
+        'Browser: ' + navigator.userAgent.replace(/^Mozilla\/5.0 /, '');
+    }
+    requestAnimationFrame(tick);
   })();
 </script>
 </body>
