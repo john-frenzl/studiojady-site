@@ -16,14 +16,14 @@
   p{opacity:.7;margin:0;padding:0 16px}
   .name{display:grid;gap:1rem;justify-items:center}
   .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem}
-  nav{position:fixed;z-index:2;top:12px;left:0;right:0;text-align:center;font-size:.85rem}
+  nav{position:fixed;z-index:2;top:12px;left:0;right:0;text-align:center;font-size:.85rem;line-height:2.4}
   nav a{color:#111;margin:0 .5rem;padding:.3rem .7rem;border:1px solid #111;border-radius:99px;text-decoration:none}
   nav a.on{background:#111;color:#fff}
   #diag{position:fixed;z-index:3;left:12px;bottom:12px;max-width:calc(100% - 24px);background:#111;color:#fff;font:12px/1.5 ui-monospace,Menlo,monospace;padding:10px 12px;border-radius:8px;white-space:pre-wrap}
 </style>
 </head>
 <body>
-<nav><a href="?v=a" id="a">A: current video</a><a href="?v=b" id="b">B: light 30fps video</a><a href="?v=c" id="c">C: live WebGL</a></nav>
+<nav><a href="?v=a" id="a">A: current video</a><a href="?v=b" id="b">B: light 30fps video</a><a href="?v=c" id="c">C: live WebGL</a><a href="?v=d" id="d">D: eased spin</a><a href="?v=e" id="e">E: gentle sway</a></nav>
 <main>
   <img class="table" src="assets/table.webp" alt="" width="1121" height="1400">
   <div class="name"><h1>Studio Jady</h1><p>Sculptural furniture in resin, wood and steel.</p></div>
@@ -44,7 +44,7 @@
 <script>
   // Variant C: the same scene as the video render, drawn live. Rotation is driven by the clock, so a
   // late frame never slows the spin, and the 50% fade is a white overlay drawn on the GPU.
-  if (v === 'c') (function () {
+  if (v === 'c' || v === 'd' || v === 'e') (function () {
     var canvas = document.createElement('canvas');
     canvas.className = 'stage';
     document.body.prepend(canvas);
@@ -76,8 +76,12 @@
     window.addEventListener('resize', resize); resize();
     var start = performance.now();
     renderer.setAnimationLoop(function (now) {
-      var ph = ((now - start) / 30000 % 1) * Math.PI * 2;
-      spinner.rotation.y = ph; spinner.rotation.x = Math.sin(ph) * 0.08;
+      var ph = ((now - start) / 30000 % 1) * Math.PI * 2, y = ph;
+      // D: a flat sign looks frozen face-on and snaps past edge-on at a constant speed, so turn
+      // faster face-on and slower edge-on. E: rock back and forth instead of a full turn.
+      if (v === 'd') y = ph + 0.3 * Math.sin(2 * ph);
+      if (v === 'e') y = 0.6 * Math.sin(ph * 2);
+      spinner.rotation.y = y; spinner.rotation.x = Math.sin(ph) * 0.08;
       renderer.render(scene, camera);
     });
   })();
