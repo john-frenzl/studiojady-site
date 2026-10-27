@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Studio Jady spin test</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap">
+<style>
+  /* Test page: compares three ways of drawing the background spin. Light theme only. */
+  html,body{height:100%;margin:0}
+  body{background:#fff;color:#111;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+  .stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);aspect-ratio:16/9;height:auto;transform:translate(-50%,calc(-50% - 15.5vh));pointer-events:none}
+  main{position:relative;height:100%;display:grid;align-content:center;gap:1rem;text-align:center;pointer-events:none}
+  h1{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(1.3rem,3.8vw,2.2rem);display:inline-block;justify-self:center;white-space:nowrap;margin:0;padding:12.5px 0 12.5px .1em;border-top:1px solid #000;border-bottom:1px solid #000;background:linear-gradient(90deg,#fff0,#ffffff80 50%,#fff0)}
+  p{opacity:.7;margin:0;padding:0 16px}
+  .name{display:grid;gap:1rem;justify-items:center}
+  .table{order:1;justify-self:center;height:min(34vh,320px);width:auto;max-width:calc(100% - 32px);margin-top:.75rem}
+  nav{position:fixed;z-index:2;top:12px;left:0;right:0;text-align:center;font-size:.85rem}
+  nav a{color:#111;margin:0 .5rem;padding:.3rem .7rem;border:1px solid #111;border-radius:99px;text-decoration:none}
+  nav a.on{background:#111;color:#fff}
+</style>
+</head>
+<body>
+<nav><a href="?v=a" id="a">A: current video</a><a href="?v=b" id="b">B: light 30fps video</a><a href="?v=c" id="c">C: live WebGL</a></nav>
+<main>
+  <img class="table" src="assets/table.webp" alt="" width="1121" height="1400">
+  <div class="name"><h1>Studio Jady</h1><p>Sculptural furniture in resin, wood and steel.</p></div>
+</main>
+<script>
+  var v = new URLSearchParams(location.search).get('v') || 'a';
+  document.getElementById(v).className = 'on';
+  if (v === 'a' || v === 'b') {
+    var el = document.createElement('video');
+    el.className = 'stage';
+    el.src = v === 'a' ? 'assets/jady-spin-light.mp4' : 'assets/test/spin-light-30.mp4';
+    el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true;
+    document.body.prepend(el);
+  }
+</script>
+<script src="assets/test/three.min.js"></script>
+<script src="assets/test/GLTFLoader.js"></script>
+<script>
+  // Variant C: the same scene as the video render, drawn live. Rotation is driven by the clock, so a
+  // late frame never slows the spin, and the 50% fade is a white overlay drawn on the GPU.
+  if (v === 'c') (function () {
+    var canvas = document.createElement('canvas');
+    canvas.className = 'stage';
+    document.body.prepend(canvas);
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setClearColor('#ffffff', 1);
+    var scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(35, 16 / 9, 0.1, 100);
+    camera.position.set(0, 0, 6);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x887766, 0.55));
+    var key = new THREE.DirectionalLight(0xffffff, 0.6); key.position.set(3, 4, 5); scene.add(key);
+    var material = new THREE.MeshStandardMaterial({ color: new THREE.Color('#d9c6b4'), roughness: 0.45, metalness: 0.15, side: THREE.DoubleSide });
+    var spinner = new THREE.Group(); scene.add(spinner);
+    var fade = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5, depthTest: false }));
+    fade.position.z = -1; fade.renderOrder = 999; camera.add(fade); scene.add(camera);
+    new THREE.GLTFLoader().load('assets/jady.glb', function (g) {
+      var m = g.scene;
+      m.traverse(function (o) { if (o.isMesh) o.material = material; });
+      m.rotation.x = Math.PI / 2;
+      var box = new THREE.Box3().setFromObject(m), size = box.getSize(new THREE.Vector3());
+      m.scale.setScalar(3.2 / Math.max(size.x, size.y));
+      box.setFromObject(m); m.position.sub(box.getCenter(new THREE.Vector3()));
+      spinner.add(m);
+    });
+    function resize() {
+      var w = canvas.clientWidth, h = canvas.clientHeight;
+      renderer.setSize(w, h, false);
+    }
+    window.addEventListener('resize', resize); resize();
+    var start = performance.now();
+    renderer.setAnimationLoop(function (now) {
+      var ph = ((now - start) / 30000 % 1) * Math.PI * 2;
+      spinner.rotation.y = ph; spinner.rotation.x = Math.sin(ph) * 0.08;
+      renderer.render(scene, camera);
+    });
+  })();
+</script>
+</body>
+</html>
