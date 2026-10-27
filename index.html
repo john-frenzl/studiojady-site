@@ -15,8 +15,7 @@
 <title>Studio Jady | Sculptural Furniture in Resin, Wood and Steel</title>
 <meta name="description" content="Studio Jady makes sculptural, one-of-a-kind furniture in resin, wood and forged steel, including side tables and statement pieces. Commissions and inquiries welcome.">
 <link rel="canonical" href="https://studiojady.com/">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#111111">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Studio Jady">
 <meta property="og:title" content="Studio Jady | Sculptural Furniture in Resin, Wood and Steel">
@@ -35,11 +34,11 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap">
 <style>
   /* --rule: lines above and below the name; --band: RGB of the band's fading gradient */
-  :root{--bg:#fff;--ink:#111;--model:#d9c6b4;--rule:#000;--band:255 255 255}
-  @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea;--model:#3a332e;--rule:#fff;--band:0 0 0}}
+  /* Dark for everyone, whatever the device setting */
+  :root{color-scheme:dark;--bg:#111;--ink:#faf1ea;--model:#3a332e;--rule:#fff;--band:0 0 0}
   html,body{height:100%;margin:0;touch-action:pan-x pan-y}
   body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
-  /* Pre-rendered 20s seamless spin with light motion blur, rendered on the page colour for each theme with its 50% fade baked in, so the browser does no blending or transparency */
+  /* Pre-rendered 20s seamless spin with light motion blur, rendered on the page colour with its 50% fade baked in, so the browser does no blending or transparency */
   #stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);height:auto;transform:translate(-50%,calc(-50% - 15.5vh));pointer-events:none}
   /* On tall screens the video is shorter than the screen, so soften its top and bottom edges */
   @media (orientation:portrait){#stage{width:260vw;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}}
@@ -58,7 +57,7 @@
 </style>
 </head>
 <body>
-<video id="stage" src="assets/jady-spin-light.mp4" poster="assets/jady-spin-light-poster.jpg" data-dark-src="assets/jady-spin-dark.mp4" data-dark-poster="assets/jady-spin-dark-poster.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
+<video id="stage" src="assets/jady-spin-dark.mp4" poster="assets/jady-spin-dark-poster.jpg" autoplay muted loop playsinline aria-hidden="true"></video>
 <main>
   <img class="table" src="assets/table.webp" alt="Studio Jady Swirl side table: a sculptural resin and oak top on three forged steel legs" width="1121" height="1400">
   <div class="name">
@@ -68,24 +67,11 @@
   <p class="inquiries"><span>Inquiries</span><a href="mailto:info@studiojady.com?subject=Inquiring%20about%20Studio%20Jady">info@studiojady.com</a></p>
 </main>
 <script>
-  // Pick the light or dark render to match the theme; hold the first frame for reduced motion
-  (function () {
+  // Hold the first frame for reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     var v = document.getElementById('stage');
-    var light = { src: v.getAttribute('src'), poster: v.getAttribute('poster') };
-    var dark = { src: v.dataset.darkSrc, poster: v.dataset.darkPoster };
-    var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var scheme = window.matchMedia('(prefers-color-scheme: dark)');
-    function apply() {
-      var pick = scheme.matches ? dark : light;
-      if (v.getAttribute('src') === pick.src) return;
-      var t = v.currentTime;
-      v.poster = pick.poster; v.src = pick.src;
-      v.addEventListener('loadedmetadata', function () { v.currentTime = t; if (!still) v.play(); }, { once: true });
-    }
-    if (still) { v.removeAttribute('autoplay'); v.pause(); }
-    apply();
-    scheme.addEventListener('change', apply);
-  })();
+    v.removeAttribute('autoplay'); v.pause();
+  }
   // No pinch zoom: iOS Safari ignores user-scalable=no, so cancel its gesture and multi-touch events too
   (function () {
     function stop(e) { e.preventDefault(); }
