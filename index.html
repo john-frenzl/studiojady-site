@@ -39,8 +39,8 @@
   @media (prefers-color-scheme:dark){:root{--bg:#111;--ink:#faf1ea;--model:#3a332e;--rule:#fff;--band:0 0 0}}
   html,body{height:100%;margin:0;touch-action:pan-x pan-y}
   body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
-  /* Pre-rendered 30s seamless spin (smooth on every device), rendered on the page colour for each theme so no blending is needed */
-  #stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);height:auto;transform:translate(-50%,calc(-50% - 15.5vh));opacity:.5;pointer-events:none}
+  /* Pre-rendered 30s seamless spin, rendered on the page colour for each theme with its 50% fade baked in, so the browser does no blending or transparency */
+  #stage{position:fixed;z-index:0;left:50%;top:50%;width:max(100vw,177.78vh);height:auto;transform:translate(-50%,calc(-50% - 15.5vh));pointer-events:none}
   /* On tall screens the video is shorter than the screen, so soften its top and bottom edges */
   @media (orientation:portrait){#stage{width:260vw;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}}
   main{position:relative;height:100%;display:grid;align-content:center;gap:1rem;text-align:center;pointer-events:none}
