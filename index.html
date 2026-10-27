@@ -25,8 +25,8 @@
   p{opacity:.7;margin:0;padding:0 16px}
   /* Name block on top, table centred beneath it; main has no z-index so it shares a layer with the spin */
   .name{display:grid;gap:1rem;justify-items:center}
-  /* Inquiries line under the tagline; main ignores the pointer, so the link opts back in */
-  .inquiries{margin-top:.5rem;font-size:.85rem;letter-spacing:.04em}
+  /* Inquiries line pinned to the bottom of the screen; main ignores the pointer, so the link opts back in */
+  .inquiries{position:fixed;z-index:1;left:0;right:0;bottom:0;padding:0 16px max(1.5rem,env(safe-area-inset-bottom));text-align:center;font-size:.85rem;letter-spacing:.04em}
   .inquiries span{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-right:.6em}
   .inquiries a{color:inherit;text-decoration:none;border-bottom:1px solid currentColor;pointer-events:auto}
   .inquiries a:hover{opacity:.7}
@@ -40,8 +40,8 @@
   <div class="name">
     <h1>Studio Jady</h1>
     <p>Sculptural furniture in resin, wood and steel.</p>
-    <p class="inquiries"><span>Inquiries</span><a href="mailto:info@studiojady.com?subject=Inquiring%20about%20Studio%20Jady">info@studiojady.com</a></p>
   </div>
+  <p class="inquiries"><span>Inquiries</span><a href="mailto:info@studiojady.com?subject=Inquiring%20about%20Studio%20Jady">info@studiojady.com</a></p>
 </main>
 <script>
   // Pick the light or dark render to match the theme; hold the first frame for reduced motion
