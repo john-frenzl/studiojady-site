@@ -27,6 +27,7 @@
   /* Two copies of the table stacked: hard light underneath, soft light on top */
   .tables{order:1;justify-self:center;display:grid;max-width:calc(100% - 32px);margin-top:.75rem}
   .table{grid-area:1/1;height:min(34vh,320px);width:auto;max-width:100%;mix-blend-mode:hard-light}
+  .table:not(.table-soft){opacity:.7}
   .table-soft{mix-blend-mode:soft-light}
 </style>
 </head>
