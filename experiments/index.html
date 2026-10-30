@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6J16JXTJ4R"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6J16JXTJ4R');
+</script>
+<title>Experiments | Studio Jady</title>
+<meta name="description" content="Experiments and works in progress from Studio Jady: studies in form, material and motion.">
+<link rel="canonical" href="https://studiojady.com/experiments/">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Studio Jady">
+<meta property="og:title" content="Experiments | Studio Jady">
+<meta property="og:description" content="Experiments and works in progress from Studio Jady.">
+<meta property="og:url" content="https://studiojady.com/experiments/">
+<meta property="og:image" content="https://studiojady.com/assets/experiments/jady-drawn-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syncopate:wght@700&display=swap">
+<style>
+  /* White page with the homepage's type and band, in dark ink */
+  :root{color-scheme:light;--bg:#fff;--ink:#111;--rule:#111;--band:0 0 0}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+  .label{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.15em;font-size:.7rem}
+  a{color:inherit;text-decoration:none}
+  header{padding:1.5rem 16px 0;text-align:center}
+  header a{border-bottom:1px solid currentColor}
+  header a:hover{opacity:.7}
+  main{flex:1;width:100%;max-width:1100px;margin:0 auto;padding:2.5rem 16px 4rem;box-sizing:border-box;display:grid;gap:3.5rem}
+  h1{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:clamp(1.3rem,3.8vw,2.2rem);justify-self:center;white-space:nowrap;margin:0;padding:12.5px 0 12.5px .1em;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:linear-gradient(90deg,rgb(var(--band) / 0),rgb(var(--band) / .06) 50%,rgb(var(--band) / 0))}
+  .intro{text-align:center;opacity:.7;margin:-2.5rem 0 0}
+  figure{margin:0;display:grid;gap:1rem}
+  figure video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#c4c4c4}
+  figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1.5rem;align-items:baseline}
+  figcaption p{margin:0;opacity:.7;flex-basis:100%}
+  .num{opacity:.5}
+</style>
+</head>
+<body>
+<header><a class="label" href="/">Studio Jady</a></header>
+<main>
+  <h1>Experiments</h1>
+  <p class="intro">Studies in form, material and motion.</p>
+  <figure>
+    <video src="/assets/experiments/jady-drawn.mp4" poster="/assets/experiments/jady-drawn-poster.jpg" autoplay muted loop playsinline controls preload="metadata" aria-label="The Jady signature drawing itself as a green tube in 3D"></video>
+    <figcaption>
+      <span class="label">Jady, drawn</span>
+      <span class="label num">No. 01</span>
+      <p>The signature drawn as one continuous stroke in 3D.</p>
+    </figcaption>
+  </figure>
+</main>
+<script>
+  // Show the finished signature instead of playing for reduced motion
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.querySelectorAll('video').forEach(function (v) { v.removeAttribute('autoplay'); v.pause(); });
+  }
+</script>
+</body>
+</html>
