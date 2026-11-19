@@ -48,10 +48,18 @@
   .plates{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0}
   .plates img{display:block;width:100%;height:auto;aspect-ratio:3/5;object-fit:contain;background:#1e1d1e}
   .story{max-width:38rem;line-height:1.65}
+  .rig{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:2rem;align-items:start}
+  .rig figure{gap:.6rem}
+  .rig img{display:block;width:100%;height:auto;background:#54545a}
+  .rig figcaption p{opacity:.6;font-size:.9rem}
+  .story h2{font-family:Syncopate,"Helvetica Neue",Arial,sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.15em;font-size:.7rem;margin:1.5em 0 .75em}
+  .story h2:first-child{margin-top:0}
+  .note{border-left:2px solid var(--ink);padding-left:1rem}
   .story p{margin:0 0 1em;opacity:.8}
   .story ol{margin:0 0 1em;padding-left:1.25em;opacity:.8}
   .story li{margin:0 0 .5em}
   @media (max-width:640px){.plates{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:800px){.rig{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -78,17 +86,32 @@
       <span class="label" id="cast-title">Lost PLA, found aluminum</span>
       <span class="label num">No. 02</span>
     </div>
-    <div class="story">
-      <p>Lost-wax casting is one of the oldest ways to make a bronze. You carve the piece in wax, bury it in a mold, melt the wax out and pour metal into the space it leaves behind. This experiment keeps the method and swaps the wax for a 3D print.</p>
-      <ol>
-        <li><strong>The model.</strong> A bust of a woman in a winged helmet, a cat on each shoulder, set on a carved plinth. Every strand of hair and fold of cloth on screen has to survive into metal.</li>
-        <li><strong>Hollow it out.</strong> A solid bust wastes plastic, takes longer to burn away and pours a lot of aluminum. So the form becomes a thin shell, with a void at its core.</li>
-        <li><strong>Split and pin.</strong> Cut in half down the middle, each side prints flat on the bed with fewer supports. Pins along the seam lock the halves back together exactly.</li>
-        <li><strong>Print in PLA.</strong> The pattern is printed in ordinary PLA, then joined, and sprues are added to carry the metal in and let the air out.</li>
-        <li><strong>Invest and burn out.</strong> The pattern is set in a flask of investment plaster. Once cured, the flask goes into a kiln and the PLA burns away, leaving a perfect negative of the bust.</li>
-        <li><strong>Pour.</strong> Molten aluminum fills the cavity. When it cools, the plaster is broken off, the sprues are cut, and the cast is cleaned and finished by hand.</li>
-      </ol>
-      <p>The print is lost so the metal can be found.</p>
+    <p class="story">Lost-wax casting is one of the oldest ways to make a bronze. You make the piece in wax, bury it in a mold, melt the wax out and pour metal into the space it leaves behind. This experiment keeps the idea and swaps the wax for a 3D print, the plaster for drywall joint compound and the foundry flask for a bucket of sand.</p>
+    <div class="rig">
+      <figure>
+        <img src="/assets/experiments/cast-mold-form.jpg" width="1224" height="1382" loading="lazy" alt="The full casting form on the print bed: the bust on a base block, a tall funnel and sprue on the left, and vent tubes rising from the top of the head">
+        <figcaption><p>The complete form, ready to print. Funnel and sprue on the left, vents from the crown, everything tied to one base.</p></figcaption>
+      </figure>
+      <div class="story">
+        <h2>The form</h2>
+        <ol>
+          <li><strong>A hollow shell.</strong> The bust is emptied out to a thin wall. Less plastic to burn away, less aluminum to pour, and an even thickness that cools more evenly.</li>
+          <li><strong>Split and pinned.</strong> It is cut in half so each side prints with fewer supports. Pins along the seam lock the halves back together exactly.</li>
+          <li><strong>Pour cup and sprue.</strong> The funnel on the tall column is where the metal goes in. It drops down the sprue and enters the bust from the base, so the mold fills from the bottom up.</li>
+          <li><strong>Vents.</strong> The tubes rising from the crown let air and burnt-off gas escape as the metal climbs, and give the last of the aluminum somewhere to go.</li>
+          <li><strong>The base.</strong> One block ties the bust, sprue and funnel together so the whole form stands on its own and can be printed in PLA as a single setup.</li>
+        </ol>
+        <h2>The pour</h2>
+        <ol start="6">
+          <li><strong>Coat.</strong> The printed form is painted with drywall joint compound, layer after layer, until it has a hard crust. The open mouths of the funnel and vents stay clear.</li>
+          <li><strong>Dry.</strong> The coating is left to dry all the way through.</li>
+          <li><strong>Bury.</strong> The form goes into a metal bucket and play sand is packed around it, up to the lip of the pour cup. The sand holds the thin crust in place against the weight of the metal.</li>
+          <li><strong>Pour.</strong> Molten aluminum goes into the funnel and takes the place of the lost PLA, running down the sprue, up through the bust and out toward the vents.</li>
+          <li><strong>Reveal.</strong> Once it cools, the sand is tipped out, the crust is broken away, and the sprue and vents are cut off to leave the bust in aluminum.</li>
+        </ol>
+        <p class="note">Water is the danger here. Joint compound and sand both hold moisture, and any that is left turns to steam the instant molten metal reaches it, which can throw aluminum out of the cup. Everything has to be bone dry. Burning the PLA out in a kiln before the pour also keeps its smoke and gas from fighting the metal.</p>
+        <p>The print is lost so the metal can be found.</p>
+      </div>
     </div>
   </article>
 </main>
