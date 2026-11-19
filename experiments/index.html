@@ -41,9 +41,17 @@
   .intro{text-align:center;opacity:.7;margin:-2.5rem 0 0}
   figure{margin:0;display:grid;gap:1rem}
   figure video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#c4c4c4}
-  figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1.5rem;align-items:baseline}
+  figcaption,.cap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1.5rem;align-items:baseline}
   figcaption p{margin:0;opacity:.7;flex-basis:100%}
   .num{opacity:.5}
+  .entry{display:grid;gap:1.25rem}
+  .plates{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0}
+  .plates img{display:block;width:100%;height:auto;aspect-ratio:3/5;object-fit:contain;background:#1e1d1e}
+  .story{max-width:38rem;line-height:1.65}
+  .story p{margin:0 0 1em;opacity:.8}
+  .story ol{margin:0 0 1em;padding-left:1.25em;opacity:.8}
+  .story li{margin:0 0 .5em}
+  @media (max-width:640px){.plates{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -59,6 +67,30 @@
       <p>The signature drawn as one continuous stroke in 3D.</p>
     </figcaption>
   </figure>
+  <article class="entry" aria-labelledby="cast-title">
+    <div class="plates">
+      <img src="/assets/experiments/cast-bust-front.jpg" width="746" height="1244" loading="lazy" alt="Digital model of a bust: a woman in a winged helmet holding two cats, on a carved round plinth">
+      <img src="/assets/experiments/cast-bust-back.jpg" width="756" height="1312" loading="lazy" alt="The back of the bust, long wavy hair falling over a draped cloak">
+      <img src="/assets/experiments/cast-section.jpg" width="720" height="1210" loading="lazy" alt="The bust cut in half, showing a thin hollow shell and round holes for registration pins">
+      <img src="/assets/experiments/cast-section-side.jpg" width="544" height="1170" loading="lazy" alt="Side view of the split bust with its alignment pins in place">
+    </div>
+    <div class="cap">
+      <span class="label" id="cast-title">Lost PLA, found aluminum</span>
+      <span class="label num">No. 02</span>
+    </div>
+    <div class="story">
+      <p>Lost-wax casting is one of the oldest ways to make a bronze. You carve the piece in wax, bury it in a mold, melt the wax out and pour metal into the space it leaves behind. This experiment keeps the method and swaps the wax for a 3D print.</p>
+      <ol>
+        <li><strong>The model.</strong> A bust of a woman in a winged helmet, a cat on each shoulder, set on a carved plinth. Every strand of hair and fold of cloth on screen has to survive into metal.</li>
+        <li><strong>Hollow it out.</strong> A solid bust wastes plastic, takes longer to burn away and pours a lot of aluminum. So the form becomes a thin shell, with a void at its core.</li>
+        <li><strong>Split and pin.</strong> Cut in half down the middle, each side prints flat on the bed with fewer supports. Pins along the seam lock the halves back together exactly.</li>
+        <li><strong>Print in PLA.</strong> The pattern is printed in ordinary PLA, then joined, and sprues are added to carry the metal in and let the air out.</li>
+        <li><strong>Invest and burn out.</strong> The pattern is set in a flask of investment plaster. Once cured, the flask goes into a kiln and the PLA burns away, leaving a perfect negative of the bust.</li>
+        <li><strong>Pour.</strong> Molten aluminum fills the cavity. When it cools, the plaster is broken off, the sprues are cut, and the cast is cleaned and finished by hand.</li>
+      </ol>
+      <p>The print is lost so the metal can be found.</p>
+    </div>
+  </article>
 </main>
 <script>
   // Show the finished signature instead of playing for reduced motion
